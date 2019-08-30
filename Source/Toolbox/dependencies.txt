@@ -1,0 +1,2 @@
+- must be one user param of type text in model named "type", used to define what type of model on form UI
+- counts and names of fields must match what's on the UI form 
