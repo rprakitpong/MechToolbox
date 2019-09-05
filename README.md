@@ -1,5 +1,6 @@
 # MechToolbox
 Generate CAD models of mechanical parts using Inventor SDK
+
 ![](Media/sample.gif)
 
 ## How to use:
