@@ -10,29 +10,28 @@ using System.Windows.Forms;
 
 namespace Toolbox
 {
-    public partial class Form1 : Form
+    public partial class Form : System.Windows.Forms.Form
     {
         // model wrapper, interface to inventor window
         ModelWrapper mw = new ModelWrapper();
 
-        // unit/cm ratio table for conversion
+        // unit table for conversion to inventor's default units (learned from trial and error)
+        // length: cm
+        // angle: rad
+        // angle^2: sr
+        // ul: ul
         Dictionary<string, double> unitsTable = new Dictionary<string, double>();
-
-        // unit fields
-        string unitName = "unit";
-        int unitFieldsCount = 3;
-        Dictionary<string, string> unitFieldTable = new Dictionary<string, string>();
-
+        
         // input array fields
         string inputName = "val_dim";
         string labelName = "name_dim";
-        int inputFieldsCount = 4;
-        Dictionary<string, TextBox> inputs = new Dictionary<string, TextBox>();
+        int inputFieldsCount = 12;
+        Dictionary<string, dimensionProperty> inputs = new Dictionary<string, dimensionProperty>();
 
         // form name
         string formName = " Generater";
 
-        public Form1()
+        public Form()
         {
             InitializeComponent();
         }
@@ -40,17 +39,32 @@ namespace Toolbox
         protected override void OnLoad(EventArgs e)
         {
             // initialize converter table
-            unitsTable.Add("cm", 1); // cm must be first, dependency with form design
             unitsTable.Add("mm", 0.1);
+            unitsTable.Add("cm", 1);
+            unitsTable.Add("m", 100);
             unitsTable.Add("in", 2.54);
+            unitsTable.Add("ft", 30.48);
+            unitsTable.Add("micron", 0.0001);
+            unitsTable.Add("nauticalMile", 185200);
+            unitsTable.Add("mil", 0.00254);
+
+            unitsTable.Add("rad", 1);
+            unitsTable.Add("deg", 0.0174532925);
+            unitsTable.Add("grad", 0.015707963267949);
+
+            unitsTable.Add("sr", 1);
+
+            unitsTable.Add("ul", 1);
 
             base.OnLoad(e);
 
-            initFormDimFields(mw.getDims());
+            initFormDimFields(mw.getDims(), mw.getUnits());
             initFormName(mw.getName());
-            initUnitButtons();
         }
 
+        /*
+        string unitName = "unit";
+        int unitFieldsCount = 3;
         private void initUnitButtons()
         {
             int i = 0;
@@ -75,20 +89,22 @@ namespace Toolbox
                 }
             }
         }
+        */
 
         private void initFormName(string v)
         {
             this.Text = v + formName;
         }
 
-        private void initFormDimFields(string[] v)
+        private void initFormDimFields(string[] name, string[] units)
         {
+            
             for (int i = 0; i < inputFieldsCount; i++)
             {
-                if (i < v.Length)
+                if (i < name.Length)
                 {
-                    inputs.Add(v[i], (TextBox)this.Controls.Find(inputName + i, true)[0]);
-                    this.Controls.Find(labelName + i, true)[0].Text = v[i];
+                    inputs.Add(name[i], new dimensionProperty((TextBox)this.Controls.Find(inputName + i, true)[0], units[i]));
+                    this.Controls.Find(labelName + i, true)[0].Text = name[i] + " (" + units[i] + ")";
                 } else
                 {
                     this.Controls.Find(inputName + i, true)[0].Visible = false;
@@ -107,14 +123,12 @@ namespace Toolbox
 
         private void button1_Click(object sender, EventArgs e)
         {
-            var temp = from RadioButton r in unitsGroup.Controls where r.Checked == true select r.Name;
-            double unitConversion = unitsTable[unitFieldTable[temp.First()]];
             Dictionary<string, double> dims = new Dictionary<string, double>();
-            foreach (KeyValuePair<string, TextBox> inputPair in inputs)
+            foreach (KeyValuePair<string, dimensionProperty> inputPair in inputs)
             {
                 try
                 {
-                    dims.Add(inputPair.Key, unitConversion * Convert.ToDouble(inputPair.Value.Text));
+                    dims.Add(inputPair.Key, unitsTable[inputPair.Value.unit] * Convert.ToDouble(inputPair.Value.inputField.Text));
                 }
                 catch (System.FormatException)
                 {
@@ -122,6 +136,18 @@ namespace Toolbox
                 }
             }
             mw.setDims(dims);
+        }
+
+        public class dimensionProperty
+        {
+            public TextBox inputField;
+            public string unit;
+
+            public dimensionProperty(TextBox thisInputField, string thisUnit)
+            {
+                inputField = thisInputField;
+                unit = thisUnit;
+            }
         }
         
     }
