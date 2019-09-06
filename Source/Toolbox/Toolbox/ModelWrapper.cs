@@ -5,21 +5,50 @@ namespace Toolbox
     using Inventor;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Runtime.InteropServices;
     using System.Text;
     using System.Windows.Forms;
 
-    public class ModelWrapper
+    public abstract class ModelWrapper
+    {
+        string filePath;
+        Dictionary<string, string> partParamNameUnitPairs;
+        string partName;
+
+        public ModelWrapper(string path)
+        {
+            filePath = path;
+            initPart(path);
+            partParamNameUnitPairs = initPartParamNameUnit();
+            partName = initPartName();
+        }
+
+        public abstract void initPart(string path);
+        public abstract Dictionary<string, string> initPartParamNameUnit();
+        public abstract string initPartName();
+
+        public abstract void setDimsNum(Dictionary<string, double> nameDimsPair);
+        public string[] getDimsName() { return partParamNameUnitPairs.Keys.ToArray(); }
+        public string[] getDimsUnit() { return partParamNameUnitPairs.Values.ToArray(); }
+        public string getModelName() { return partName; }
+    }
+
+    public class InventorModelWrapper : ModelWrapper
     {
         private Inventor.Application m_inventorInstance;
         private PartDocument m_partInstance;
         private UserParameters m_partParams;
-        private string[] m_partParamNames;
-        private string[] m_partParamUnits;
 
-        public ModelWrapper()
+        public InventorModelWrapper(string path) : base(path)
         {
-            Console.WriteLine("loaded test model");
+            //
+        }
+
+        public override void initPart(string path)
+        {
+            //TODO do something with path
+            string filePath = path;
 
             try
             {
@@ -41,25 +70,6 @@ namespace Toolbox
 
                 // init partparams collection
                 m_partParams = m_partInstance.ComponentDefinition.Parameters.UserParameters;
-
-                // init partparams names array
-                IEnumerator partParamsEnum = m_partParams.GetEnumerator();
-                m_partParamNames = new string[m_partParams.Count - 1];
-                m_partParamUnits = new string[m_partParams.Count - 1];
-                UserParameter temp;
-                int index = 0;
-                while (partParamsEnum.MoveNext())
-                {
-                    temp = partParamsEnum.Current as UserParameter;
-                    if (temp.Name != "type")
-                    {
-                        //Console.WriteLine(temp.get_Units());
-                        m_partParamNames[index] = temp.Name;
-                        m_partParamUnits[index] = temp.get_Units();
-                        index++;
-                    }
-                }
-
             }
             catch (Exception e)
             {
@@ -67,7 +77,32 @@ namespace Toolbox
             }
         }
 
-        public void setDims(Dictionary<string, double> nameDimsPair)
+        public override Dictionary<string, string> initPartParamNameUnit()
+        {
+            Dictionary<string, string> pairs = new Dictionary<string, string>();
+
+            // init partparams names array
+            IEnumerator partParamsEnum = m_partParams.GetEnumerator();
+            
+            UserParameter temp;
+            while (partParamsEnum.MoveNext())
+            {
+                temp = partParamsEnum.Current as UserParameter;
+                if (temp.Name != "type")
+                {
+                    pairs.Add(temp.Name, temp.get_Units());
+                }
+            }
+
+            return pairs;
+        }
+
+        public override string initPartName()
+        {
+            return m_partParams["type"].Value as string;
+        }
+
+        public override void setDimsNum(Dictionary<string, double> nameDimsPair)
         {
             UserParameter temp;
             foreach (KeyValuePair<string, double> pair in nameDimsPair)
@@ -76,27 +111,13 @@ namespace Toolbox
                 if (temp == null)
                 {
                     Console.WriteLine("dimension with name " + pair.Key + " not found in " + m_partParams["type"].Value);
-                } else
+                }
+                else
                 {
                     Console.WriteLine(pair.Value + temp.get_Units()); // inventor promptly ignores current unit and juts inputs cm
                     temp.Value = pair.Value;
                 }
             }
-        }
-
-        public string[] getDims()
-        {
-            return m_partParamNames;
-        }
-
-        public string[] getUnits()
-        {
-            return m_partParamUnits;
-        }
-
-        public string getName()
-        {
-            return m_partParams["type"].Value as string;
         }
 
         private string AddSpacesToSentence(string text)

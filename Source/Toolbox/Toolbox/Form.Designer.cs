@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.ok = new System.Windows.Forms.Button();
+            this.okBtn = new System.Windows.Forms.Button();
             this.name_dim0 = new System.Windows.Forms.Label();
             this.val_dim0 = new System.Windows.Forms.TextBox();
             this.val_dim1 = new System.Windows.Forms.TextBox();
@@ -53,17 +53,19 @@
             this.val_dim9 = new System.Windows.Forms.TextBox();
             this.val_dim8 = new System.Windows.Forms.TextBox();
             this.name_dim8 = new System.Windows.Forms.Label();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.fileDirBtn = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // ok
+            // okBtn
             // 
-            this.ok.Location = new System.Drawing.Point(383, 12);
-            this.ok.Name = "ok";
-            this.ok.Size = new System.Drawing.Size(75, 23);
-            this.ok.TabIndex = 2;
-            this.ok.Text = "OK";
-            this.ok.UseVisualStyleBackColor = true;
-            this.ok.Click += new System.EventHandler(this.button1_Click);
+            this.okBtn.Location = new System.Drawing.Point(383, 12);
+            this.okBtn.Name = "okBtn";
+            this.okBtn.Size = new System.Drawing.Size(75, 23);
+            this.okBtn.TabIndex = 2;
+            this.okBtn.Text = "OK";
+            this.okBtn.UseVisualStyleBackColor = true;
+            this.okBtn.Click += new System.EventHandler(this.button1_Click);
             // 
             // name_dim0
             // 
@@ -257,11 +259,26 @@
             this.name_dim8.TabIndex = 27;
             this.name_dim8.Text = "dim_stub8";
             // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            // 
+            // fileDirBtn
+            // 
+            this.fileDirBtn.Location = new System.Drawing.Point(383, 354);
+            this.fileDirBtn.Name = "fileDirBtn";
+            this.fileDirBtn.Size = new System.Drawing.Size(75, 23);
+            this.fileDirBtn.TabIndex = 35;
+            this.fileDirBtn.Text = "Get File";
+            this.fileDirBtn.UseVisualStyleBackColor = true;
+            this.fileDirBtn.Click += new System.EventHandler(this.fileDirBtn_Click);
+            // 
             // Form
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(479, 389);
+            this.Controls.Add(this.fileDirBtn);
             this.Controls.Add(this.name_dim11);
             this.Controls.Add(this.name_dim10);
             this.Controls.Add(this.name_dim9);
@@ -286,7 +303,7 @@
             this.Controls.Add(this.val_dim1);
             this.Controls.Add(this.val_dim0);
             this.Controls.Add(this.name_dim0);
-            this.Controls.Add(this.ok);
+            this.Controls.Add(this.okBtn);
             this.Name = "Form";
             this.Text = "Form1";
             this.ResumeLayout(false);
@@ -295,7 +312,7 @@
         }
 
         #endregion
-        private System.Windows.Forms.Button ok;
+        private System.Windows.Forms.Button okBtn;
         private System.Windows.Forms.Label name_dim0;
         private System.Windows.Forms.TextBox val_dim0;
         private System.Windows.Forms.TextBox val_dim1;
@@ -320,6 +337,8 @@
         private System.Windows.Forms.TextBox val_dim9;
         private System.Windows.Forms.TextBox val_dim8;
         private System.Windows.Forms.Label name_dim8;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.Button fileDirBtn;
     }
 }
 

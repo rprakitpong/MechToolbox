@@ -13,7 +13,7 @@ namespace Toolbox
     public partial class Form : System.Windows.Forms.Form
     {
         // model wrapper, interface to inventor window
-        ModelWrapper mw = new ModelWrapper();
+        InventorModelWrapper mw = new InventorModelWrapper("stub");
 
         // unit table for conversion to inventor's default units (learned from trial and error)
         // length: cm
@@ -58,38 +58,9 @@ namespace Toolbox
 
             base.OnLoad(e);
 
-            initFormDimFields(mw.getDims(), mw.getUnits());
-            initFormName(mw.getName());
+            initFormDimFields(mw.getDimsName(), mw.getDimsUnit());
+            initFormName(mw.getModelName());
         }
-
-        /*
-        string unitName = "unit";
-        int unitFieldsCount = 3;
-        private void initUnitButtons()
-        {
-            int i = 0;
-            RadioButton temp;
-            foreach (KeyValuePair<string, double> unit in unitsTable)
-            {
-                temp = (RadioButton)this.Controls.Find(unitName + i, true)[0];
-                if (temp != null)
-                {
-                    temp.Text = unit.Key;
-                    unitFieldTable.Add(temp.Name, unit.Key);
-                }
-                i++;
-            }
-            if (i < unitFieldsCount)
-            {
-                i--;
-                while (i + 1 < unitFieldsCount)
-                {
-                    i++;
-                    this.Controls.Find(unitName + i, true)[0].Visible = false;
-                }
-            }
-        }
-        */
 
         private void initFormName(string v)
         {
@@ -135,7 +106,7 @@ namespace Toolbox
                     MessageBox.Show("Invalid input: please input number.");
                 }
             }
-            mw.setDims(dims);
+            mw.setDimsNum(dims);
         }
 
         public class dimensionProperty
@@ -149,6 +120,13 @@ namespace Toolbox
                 unit = thisUnit;
             }
         }
-        
+
+        private void fileDirBtn_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog1.ShowDialog() == DialogResult.OK) 
+            {
+                Console.WriteLine(openFileDialog1.FileName); 
+            }
+        }
     }
 }
