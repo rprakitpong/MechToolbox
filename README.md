@@ -2,13 +2,14 @@
 Generate CAD models of mechanical parts using Inventor SDK
 
 ![](Media/sample.gif)
+Sample from v0.9
 
 ## How to use:
 - clone the repo
 - the latest app release is in Source/Builds
-- open the model that you want to parameterize from PartsLibrary
-- open the app, customize your parameters, select unit, and click ok
-- go back to your Inventor window and your model should be updated
+- run the app, click "Get File" to select a part from PartsLibrary
+- after Inventor initializes, form will populate with parameters
+- customize your parameters, and parameters are automatically saved on each change
 
 ## Contribute:
 Contribute a model to PartsLibrary
@@ -18,9 +19,10 @@ Contribute a model to PartsLibrary
 
 ## App TODO:
 - not update if blank, instead of throwing textbox
-- unit test
-- comment the code
-- add more units
+- refactoring polling into async in InventorModelWrapper.initPart
+- SolidWorksModelWrapper class, and the guards to separate between sldr and ipt
+- read/write FileStream of ipt instead of opening Inventor instance
+- complete Inventor units
 
 ## CAD TODO:
 - make bevel gear
