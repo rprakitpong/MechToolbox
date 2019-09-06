@@ -13,15 +13,8 @@ namespace Toolbox
     public partial class Form : System.Windows.Forms.Form
     {
         // model wrapper, interface to inventor window
-        InventorModelWrapper mw = new InventorModelWrapper("stub");
+        InventorModelWrapper mw; 
 
-        // unit table for conversion to inventor's default units (learned from trial and error)
-        // length: cm
-        // angle: rad
-        // angle^2: sr
-        // ul: ul
-        Dictionary<string, double> unitsTable = new Dictionary<string, double>();
-        
         // input array fields
         string inputName = "val_dim";
         string labelName = "name_dim";
@@ -38,28 +31,15 @@ namespace Toolbox
 
         protected override void OnLoad(EventArgs e)
         {
-            // initialize converter table
-            unitsTable.Add("mm", 0.1);
-            unitsTable.Add("cm", 1);
-            unitsTable.Add("m", 100);
-            unitsTable.Add("in", 2.54);
-            unitsTable.Add("ft", 30.48);
-            unitsTable.Add("micron", 0.0001);
-            unitsTable.Add("nauticalMile", 185200);
-            unitsTable.Add("mil", 0.00254);
-
-            unitsTable.Add("rad", 1);
-            unitsTable.Add("deg", 0.0174532925);
-            unitsTable.Add("grad", 0.015707963267949);
-
-            unitsTable.Add("sr", 1);
-
-            unitsTable.Add("ul", 1);
-
             base.OnLoad(e);
 
-            initFormDimFields(mw.getDimsName(), mw.getDimsUnit());
-            initFormName(mw.getModelName());
+            hideParamFields();
+        }
+
+        private void hideParamFields()
+        {
+            dims_group.Visible = false;
+            okBtn.Visible = false;
         }
 
         private void initFormName(string v)
@@ -69,12 +49,15 @@ namespace Toolbox
 
         private void initFormDimFields(string[] name, string[] units)
         {
-            
+            dims_group.Visible = true;
+            okBtn.Visible = true;
+
             for (int i = 0; i < inputFieldsCount; i++)
             {
                 if (i < name.Length)
                 {
                     inputs.Add(name[i], new dimensionProperty((TextBox)this.Controls.Find(inputName + i, true)[0], units[i]));
+                    this.Controls.Find(labelName + i, true)[0].Visible = true;
                     this.Controls.Find(labelName + i, true)[0].Text = name[i] + " (" + units[i] + ")";
                 } else
                 {
@@ -99,7 +82,7 @@ namespace Toolbox
             {
                 try
                 {
-                    dims.Add(inputPair.Key, unitsTable[inputPair.Value.unit] * Convert.ToDouble(inputPair.Value.inputField.Text));
+                    dims.Add(inputPair.Key, Convert.ToDouble(inputPair.Value.inputField.Text));
                 }
                 catch (System.FormatException)
                 {
@@ -125,7 +108,11 @@ namespace Toolbox
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK) 
             {
-                Console.WriteLine(openFileDialog1.FileName); 
+                mw = new InventorModelWrapper(@"C:\Users\Frienddo\Desktop\MechToolbox\PartsLibrary\SpurGear.ipt");
+
+                initFormDimFields(mw.getDimsName(), mw.getDimsUnit());
+                initFormName(mw.getModelName());
+                fileDirBtn.Visible = false;
             }
         }
     }

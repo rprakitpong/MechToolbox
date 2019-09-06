@@ -5,6 +5,7 @@ namespace Toolbox
     using Inventor;
     using System.Collections;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Runtime.InteropServices;
     using System.Text;
@@ -12,9 +13,9 @@ namespace Toolbox
 
     public abstract class ModelWrapper
     {
-        string filePath;
-        Dictionary<string, string> partParamNameUnitPairs;
-        string partName;
+        public string filePath;
+        public Dictionary<string, string> partParamNameUnitPairs;
+        public string partName;
 
         public ModelWrapper(string path)
         {
@@ -28,6 +29,8 @@ namespace Toolbox
         public abstract Dictionary<string, string> initPartParamNameUnit();
         public abstract string initPartName();
 
+        // set in the units according to getDimsUnit
+        // wrapper's job to convert to inventor's default unit
         public abstract void setDimsNum(Dictionary<string, double> nameDimsPair);
         public string[] getDimsName() { return partParamNameUnitPairs.Keys.ToArray(); }
         public string[] getDimsUnit() { return partParamNameUnitPairs.Values.ToArray(); }
@@ -36,36 +39,90 @@ namespace Toolbox
 
     public class InventorModelWrapper : ModelWrapper
     {
+
+        // unit table for conversion to inventor's default units (learned from trial and error)
+        // length: cm
+        // angle: rad
+        // angle^2: sr
+        // ul: ul
+        Dictionary<string, double> unitsTable = new Dictionary<string, double>();
+
         private Inventor.Application m_inventorInstance;
         private PartDocument m_partInstance;
         private UserParameters m_partParams;
 
         public InventorModelWrapper(string path) : base(path)
         {
-            //
+            // initialize converter table
+            unitsTable.Add("mm", 0.1);
+            unitsTable.Add("cm", 1);
+            unitsTable.Add("m", 100);
+            unitsTable.Add("in", 2.54);
+            unitsTable.Add("ft", 30.48);
+            unitsTable.Add("micron", 0.0001);
+            unitsTable.Add("nauticalMile", 185200);
+            unitsTable.Add("mil", 0.00254);
+
+            unitsTable.Add("rad", 1);
+            unitsTable.Add("deg", 0.0174532925);
+            unitsTable.Add("grad", 0.015707963267949);
+
+            unitsTable.Add("sr", 1);
+
+            unitsTable.Add("ul", 1);
         }
 
         public override void initPart(string path)
         {
-            //TODO do something with path
-            string filePath = path;
-
             try
             {
-                try
+                int copyNum = 0;
+                string newPath = path;
+                bool madeFile = false;
+                while (!madeFile)
                 {
-                    // Get active inventor object
-                    m_inventorInstance = System.Runtime.InteropServices.Marshal.GetActiveObject("Inventor.Application") as Inventor.Application;
+                    newPath = path.Insert(path.IndexOf(".ipt"), "Copy" + copyNum);
+                    if (System.IO.File.Exists(newPath))
+                    {
+                        copyNum++;
+                    } else
+                    {
+                        madeFile = true;
+                    }
                 }
-                catch (COMException)
+                System.IO.File.Copy(path, newPath);
+                System.Diagnostics.Process.Start(newPath);
+
+                // TODO remove polling, use async
+
+                bool polling1 = true;
+                while (polling1)
                 {
-                    MessageBox.Show("Inventor must be running.");
+                    try
+                    {
+                        // Get active inventor object
+                        m_inventorInstance = System.Runtime.InteropServices.Marshal.GetActiveObject("Inventor.Application") as Inventor.Application;
+                        polling1 = false;
+                    }
+                    catch (COMException)
+                    {
+                        System.Threading.Thread.Sleep(1000);
+                        //MessageBox.Show("Inventor must be running.");
+                    }
                 }
 
-                m_partInstance = m_inventorInstance.ActiveDocument as PartDocument;
-                if (m_partInstance == null)
+                bool polling2 = true;
+                while (polling2)
                 {
-                    MessageBox.Show("Part from parts library must be opened");
+                    m_partInstance = m_inventorInstance.ActiveDocument as PartDocument;
+                    if (m_partInstance == null)
+                    {
+                        System.Threading.Thread.Sleep(1000);
+                        //MessageBox.Show("Part from parts library must be opened");
+                    } else
+                    {
+                        polling2 = false;
+                    }
                 }
 
                 // init partparams collection
@@ -114,10 +171,13 @@ namespace Toolbox
                 }
                 else
                 {
-                    Console.WriteLine(pair.Value + temp.get_Units()); // inventor promptly ignores current unit and juts inputs cm
-                    temp.Value = pair.Value;
+                    //Console.WriteLine(pair.Value + temp.get_Units()); // inventor promptly ignores current unit and juts inputs cm
+                    temp.Value = pair.Value * unitsTable[partParamNameUnitPairs[pair.Key]];
                 }
             }
+
+            m_partInstance.Update();
+            m_partInstance.Save();
         }
 
         private string AddSpacesToSentence(string text)
