@@ -27,6 +27,10 @@ Contribute a model to PartsLibrary
 - make other models
 
 ## Releases:
+v0.9.1
+- instead of manually opening part instance and modifying current part, app takes part path, copies part, open part, save on parameter modification
+- Inventor window can be ignored completely while using app (still need Inventor instance opened per Inventor SDK's implementation)
+
 v0.9
 - supports all options of length, angle, and unitless found in inventor
 - can't change unit in app
