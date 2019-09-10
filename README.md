@@ -36,9 +36,7 @@ Second is this app works with any Inventor part as long as the dimensions are fo
 
 - Q: Why Inventor (for now)?
 - A: 
-Inventor API is available with every install of Inventor (I believe) and very easy to install. Inventor itself is free to hobbyists and students, which means that anyone can contribute to the project. Compared to SolidWorks, you need a paid serial number to get the SDK, so students and hobbyists have to individually request it. I'm in the process of requesting one right now. Even then, SolidWorks might not approve or ignore my request and I just can't do it.
-
-Dassault Systems, if you see this, please give it to me. Thanks.
+Inventor API is available with every install of Inventor (I believe) and very easy to install. Inventor itself is free to hobbyists and students, which means that anyone can contribute to the project. Compared to SolidWorks, you need a paid serial number to get the SDK, so students and hobbyists have to individually request it. I'm in the process of requesting one right now. Even then, SolidWorks might not approve or ignore my request and I just can't do it. Dassault Systems, if you see this, please give it to me. Thanks.
 
 ## Releases:
 v0.9.1
