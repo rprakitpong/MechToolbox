@@ -29,17 +29,14 @@ Contribute a model to PartsLibrary
 - make other models
 
 ## Q&A:
-Q: Why a separate app and not as an add-in?
-A: 
+- Q: Why a separate app and not as an add-in?
+- A: 
 First is for extendability. For example, C# has lots of libraries for parsing different data formats, so if one ever becomes popular, or if I need to make models from a niche data format, it’s very easy to just add it into the app, rather than waiting for next year’s Inventor version. This also true for extending in other ways, like I could make the app compatible with both Inventor and Solidworks, etc etc.
-
 Second is this app works with any Inventor part as long as the dimensions are formatted accordingly. Means that someone without Inventor experience can get a useful part without going through tutorials on Inventor UI (or maybe without even having Inventor installed, if I can get the SDK to do the things I want). Abstraction can be useful.
 
-Q: Why Inventor (for now)?
-A: 
-Inventor API is available with every install of Inventor (I believe) and very easy to install. Inventor itself is free to hobbyists and students, which means that anyone can contribute to the project.
-
-Compared to SolidWorks, where you need a paid serial number to get the SDK, so students and hobbyists have to individually request it. I'm in the process of requesting one right now. Even then, SolidWorks might not approve or ignore my request and I just can't do it.
+- Q: Why Inventor (for now)?
+- A: 
+Inventor API is available with every install of Inventor (I believe) and very easy to install. Inventor itself is free to hobbyists and students, which means that anyone can contribute to the project. Compared to SolidWorks, you need a paid serial number to get the SDK, so students and hobbyists have to individually request it. I'm in the process of requesting one right now. Even then, SolidWorks might not approve or ignore my request and I just can't do it.
 
 Dassault Systems, if you see this, please give it to me. Thanks.
 
