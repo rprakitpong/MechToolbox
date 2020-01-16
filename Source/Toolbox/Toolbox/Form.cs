@@ -13,7 +13,7 @@ namespace Toolbox
     public partial class Form : System.Windows.Forms.Form
     {
         // model wrapper, interface to inventor window
-        ModelWrapper mw; 
+        InventorModelWrapper mw; 
 
         // input array fields
         string inputName = "val_dim";
@@ -77,7 +77,6 @@ namespace Toolbox
 
         private void button1_Click(object sender, EventArgs e)
         {
-
             Dictionary<string, double> dims = new Dictionary<string, double>();
             foreach (KeyValuePair<string, dimensionProperty> inputPair in inputs)
             {
@@ -109,26 +108,11 @@ namespace Toolbox
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK) 
             {
-                string path = openFileDialog1.FileName;
-                string extension = System.IO.Path.GetExtension(path);
-                if (extension != ".ipt" && extension != ".sldprt")
-                {
-                    Console.WriteLine(path + " " + extension);
-                    MessageBox.Show("Please select ipt or sldprt file.");
-                } else
-                {
-                    if (extension == ".ipt")
-                    {
-                        mw = new InventorModelWrapper(path, ToolBox.InventorInstanceSingleton.Instance.getInventor() as Inventor.Application);
-                    }
-                    else
-                    {
-                        mw = new SolidWorksModelWrapper(path);
-                    }
-                    initFormDimFields(mw.getDimsName(), mw.getDimsUnit());
-                    initFormName(mw.getModelName());
-                    fileDirBtn.Visible = false;
-                }
+                mw = new InventorModelWrapper(@"C:\Users\Frienddo\Desktop\MechToolbox\PartsLibrary\SpurGear.ipt");
+
+                initFormDimFields(mw.getDimsName(), mw.getDimsUnit());
+                initFormName(mw.getModelName());
+                fileDirBtn.Visible = false;
             }
         }
     }
