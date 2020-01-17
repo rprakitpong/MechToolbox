@@ -13,7 +13,7 @@ namespace Toolbox
     public partial class Form : System.Windows.Forms.Form
     {
         // model wrapper, interface to inventor window
-        InventorModelWrapper mw; 
+        ModelWrapper mw; 
 
         // input array fields
         string inputName = "val_dim";
@@ -108,11 +108,27 @@ namespace Toolbox
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK) 
             {
-                mw = new InventorModelWrapper(@"C:\Users\Frienddo\Desktop\MechToolbox\PartsLibrary\SpurGear.ipt");
+                bool fileOK = false;
+                CADtype typeOfFile = Utility.Instance.FileType(openFileDialog1.FileName);
+                if (typeOfFile == CADtype.Inventor)
+                {
+                    mw = new InventorModelWrapper(@openFileDialog1.FileName);
+                    fileOK = true;
+                } else if (typeOfFile == CADtype.Solidworks)
+                {
+                    mw = new SolidworksModelWrapper(@openFileDialog1.FileName);
+                    fileOK = true;
+                } else
+                {
+                    MessageBox.Show("Invalid file;please select Inventor or Solidworks part file");
+                }
 
-                initFormDimFields(mw.getDimsName(), mw.getDimsUnit());
-                initFormName(mw.getModelName());
-                fileDirBtn.Visible = false;
+                if (fileOK)
+                {
+                    initFormDimFields(mw.getDimsName(), mw.getDimsUnit());
+                    initFormName(mw.getModelName());
+                    fileDirBtn.Visible = false;
+                }
             }
         }
     }

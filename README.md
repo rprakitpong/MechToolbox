@@ -19,8 +19,6 @@ Contribute a model to PartsLibrary
 
 ## App TODO:
 - not update if blank, instead of throwing textbox
-- refactoring polling into async in InventorModelWrapper.initPart
-- SolidWorksModelWrapper class, and the guards to separate between sldr and ipt
 - read/write FileStream of ipt instead of opening Inventor instance
 - complete Inventor units
 
@@ -39,6 +37,11 @@ Second is this app works with any Inventor part as long as the dimensions are fo
 Inventor API is available with every install of Inventor (I believe) and very easy to install. Inventor itself is free to hobbyists and students, which means that anyone can contribute to the project. Compared to SolidWorks, you need a paid serial number to get the SDK, so students and hobbyists have to individually request it. I'm in the process of requesting one right now. Even then, SolidWorks might not approve or ignore my request and I just can't do it. Dassault Systems, if you see this, please give it to me. Thanks.
 
 ## Releases:
+v0.9.2
+- integration of Solidworks
+- every instance of app creates an instance of Solidworks/Inventor, so each instance can work independently
+- left polling inside InventorModelWrapper alone, it's only used once so it's fine if it's not refactored into an async method
+
 v0.9.1
 - instead of manually opening part instance and modifying current part, app takes part path, copies part, open part, save on parameter modification
 - Inventor window can be ignored completely while using app (still need Inventor instance opened per Inventor SDK's implementation)
